@@ -1,6 +1,7 @@
 import express from 'express';
 import authRoutes from './routes/auth.js';
 import protectedRoutes from './routes/protected.js';
+import newsRoutes from './routes/news.js';
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 // API Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/protected', protectedRoutes);
+app.use('/api/v1/news', newsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
