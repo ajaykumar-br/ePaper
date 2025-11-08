@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import pdf2img from 'pdf-img-convert';
+import { pdf } from 'pdf-to-img';
 import AWS from 'aws-sdk';
 import moment from 'moment';
 import prisma from '../config/database.js';
@@ -31,8 +31,16 @@ router.post('/upload', authenticateToken, upload.single('pdf'), async (req, res)
         }
 
         // TODO 2: Convert each page to image (PNG by default)
-        // pdf2img returns Buffers for each image (1 buffer per page)
-        const images = await pdf2img.convert(req.file.buffer);
+        // pdf-to-img returns an async generator that yields each page
+        const pdfDocument = await pdf(req.file.buffer, {
+            scale: 2.0 // Adjust quality (1.0 = default, higher = better quality)
+        });
+
+        // Collect all page buffers from the generator
+        const images = [];
+        for await (const image of pdfDocument) {
+            images.push(image); // Each image is a Buffer
+        }
 
         // TODO 3: Upload each page as an image to S3
         const s3 = new AWS.S3({

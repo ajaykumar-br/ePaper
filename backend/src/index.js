@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import protectedRoutes from './routes/protected.js';
 import newsRoutes from './routes/news.js';
@@ -6,6 +7,10 @@ import newsRoutes from './routes/news.js';
 const app = express();
 
 // Middleware
+app.use(cors({
+    origin: "http://localhost:5173", // Frontend origin
+    credentials: true
+}));
 app.use(express.json());
 
 // Routes
